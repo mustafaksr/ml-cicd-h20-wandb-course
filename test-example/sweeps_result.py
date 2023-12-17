@@ -1,4 +1,4 @@
-epochs = 16
+epochs = 1
 seed = 42
 batch_size = 8
 learning_rate = 0.0001405

@@ -6,3 +6,4 @@ torch==2.0.0
 transformers==4.33.0
 wandb==0.15.9
 scikit-learn==1.2.2
+python-dotenv
