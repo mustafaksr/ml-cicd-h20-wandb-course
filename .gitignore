@@ -1,3 +1,9 @@
 
 test-example/.ipynb_checkpoints/sweeps_result-checkpoint.py
 test-example/.ipynb_checkpoints/params-checkpoint.py
+.env
+artifacts/
+*.pyc
+*.log
+wandb/
+distilroberta-retrain/

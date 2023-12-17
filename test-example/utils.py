@@ -20,16 +20,18 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
 import torch.nn.functional as F
 import wandb
 
+
+
 def read_data():
     """
     return train , test
     """
-    with open("/kaggle/working/artifacts/detect_llm_raw_data:v1/train_df.table.json") as json_data:
+    with open(os.path.join(os.path.abspath(os.getcwd()),"artifacts/detect_llm_raw_data:v1/train_df.table.json")) as json_data:
         data = json.load(json_data)
         train = pd.DataFrame(data = data["data"],columns=data["columns"])
         json_data.close()
 
-    with open("/kaggle/working/artifacts/detect_llm_raw_data:v1/test_df.table.json") as json_data:
+    with open(os.path.expanduser(os.path.join(os.path.abspath(os.getcwd()),"artifacts/detect_llm_raw_data:v1/test_df.table.json"))) as json_data:
         data = json.load(json_data)
         test = pd.DataFrame(data = data["data"],columns=data["columns"])
         json_data.close()

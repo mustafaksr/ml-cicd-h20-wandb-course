@@ -16,6 +16,20 @@ from utils import *
 import io
 import matplotlib.pyplot as plt
 import params
+import argparse
+from dotenv import load_dotenv
+
+# Load environment variables from the .env file
+load_dotenv()
+
+# Get the secret value from the environment variables
+secret_value_0 = os.getenv("SECRET_VALUE_0")
+wandb.login(key=secret_value_0)
+
+
+
+
+
 
 class WandbMetricsLogger(TrainerCallback):
     def on_evaluate(self, args, state, control, model, metrics):
@@ -157,5 +171,5 @@ def train(config=None):
     train(sweeps_result)
 
 if __name__ == '__main__':
-    parse_args()
-    train(default_config)
+
+    train(sweeps_result)
