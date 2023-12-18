@@ -16,7 +16,7 @@ import torch
 from datasets import Dataset
 import io
 import matplotlib.pyplot as plt
-from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, log_loss
 import torch.nn.functional as F
 import wandb
 
@@ -149,3 +149,18 @@ def create_model(model_name = "distilroberta-base",num_labels = 7):
     model.to(device);
     
     return model
+
+
+
+
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    
+    # Convert logits to probabilities using softmax
+    probs = np.exp(logits) / np.sum(np.exp(logits), axis=-1, keepdims=True)
+    
+    # Calculate log loss
+    loss = log_loss(labels, probs)
+
+    return {"log_loss": loss}

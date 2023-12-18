@@ -23,7 +23,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Get the secret value from the environment variables
-secret_value_0 = os.getenv("SECRET_VALUE_0")
+secret_value_0 = os.getenv("WANDB_API_KEY")
 wandb.login(key=secret_value_0)
 
 
@@ -75,14 +75,6 @@ parameters_dict = {
 
 default_config['parameters'] = parameters_dict
 
-def compute_metrics_fn(eval_preds):
-    metrics = dict()
-
-    # Extract the validation loss from eval_preds
-    validation_loss = eval_preds.loss
-    metrics['validation_loss'] = validation_loss
-
-    return metrics
 
 def parse_args():
     "Overriding default argments"

@@ -7,3 +7,6 @@ artifacts/
 *.log
 wandb/
 distilroberta-retrain/
+environment_exported.yaml
+requirements2.txt
+environment_exported.yml
