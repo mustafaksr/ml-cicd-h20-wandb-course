@@ -160,7 +160,7 @@ def train(config=None):
     conf_mat(df_val,val_pred)
 
     wandb.finish()
-    train(sweeps_result)
+    
 
 if __name__ == '__main__':
 
