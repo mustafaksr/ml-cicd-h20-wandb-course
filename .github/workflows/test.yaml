@@ -19,7 +19,7 @@ jobs:
         uses: actions/checkout@main   
    
       - name: Install Conda environment with Micromamba
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/provision-with-micromamba@main
         with:
           environment-file: test-example/conda-environment.yaml
           environment-name: course
@@ -32,4 +32,3 @@ jobs:
           pytest test-example/
         env:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
-          
