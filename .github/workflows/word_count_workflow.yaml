@@ -1,0 +1,36 @@
+name: Word Count
+
+on:
+  push:
+    branches:
+      - main  # Change this to your default branch if it's different
+  schedule:
+    - cron: '22 18 * * *'  # Run every day at 18:22 UTC
+
+jobs:
+  word-count:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get install -y jq  # Install jq for JSON processing
+      shell: bash
+
+    - name: Count Words
+      run: |
+        # Find YAML, TXT, and PY files and count words in each of them
+        find . -type f \( -name "*.yaml" -o -name "*.txt" -o -name "*.py" \) | while read -r FILE_TO_COUNT; do
+          # Use wc to count words in each file
+          WORD_COUNT=$(wc -w < "$FILE_TO_COUNT")
+          
+          # Output the word count for each file
+          echo "Word count in $FILE_TO_COUNT: $WORD_COUNT"
+          
+          # Optionally, you can save the word count as an output for further use
+          echo "::set-output name=word_count::$WORD_COUNT"
+        done
+      shell: bash
