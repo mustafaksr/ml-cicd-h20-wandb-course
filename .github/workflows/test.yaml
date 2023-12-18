@@ -1,4 +1,4 @@
-name: "Unit & Smoke Tests - mamba"
+name: "Unit & Smoke Tests - conda"
 on:
   pull_request:
     paths:
@@ -18,16 +18,13 @@ jobs:
       - name: Copy Repository Contents
         uses: actions/checkout@main   
    
-      - name: Install Conda environment with Micromamba
-        uses: mamba-org/provision-with-micromamba@main
-        with:
-          environment-file: test-example/conda-environment.yaml
-          environment-name: course
-          cache-env: true
-          cache-downloads: true
-          
+      - name: Install Conda environment
+        run: |
+          conda env create --name course --file test-example/conda-environment.yaml
+        shell: bash
+      
       - run: |
-          micromamba activate course
+          conda activate course
           pip install -U pytest
           pytest test-example/
         env:
