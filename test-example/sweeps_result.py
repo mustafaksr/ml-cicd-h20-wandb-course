@@ -1,5 +1,5 @@
 epochs = 0.025
-seed = 1
+seed = 2
 batch_size = 8
 learning_rate = 0.0001405
 weight_decay = 0.2
