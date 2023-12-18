@@ -140,9 +140,9 @@ def train(config=None):
                                 greater_is_better=False,
                                 weight_decay = config.weight_decay,
                                 evaluation_strategy="steps",
-                                logging_steps=100,
+                                logging_steps=10,
                                 per_device_train_batch_size = config.batch_size,
-                                per_device_eval_batch_size = config.batch_size ,
+                                per_device_eval_batch_size = config.batch_size 
                                 
                                 )
     early_stopping = EarlyStoppingCallback(early_stopping_patience=2)
