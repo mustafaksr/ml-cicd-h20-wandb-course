@@ -10,3 +10,4 @@ distilroberta-retrain/
 environment_exported.yaml
 requirements2.txt
 environment_exported.yml
+test-example/val_conf_matrix.png
