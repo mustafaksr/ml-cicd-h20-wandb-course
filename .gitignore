@@ -11,3 +11,4 @@ environment_exported.yaml
 requirements2.txt
 environment_exported.yml
 test-example/val_conf_matrix.png
+client/.ipynb_checkpoints/github_api-checkpoint.ipynb
