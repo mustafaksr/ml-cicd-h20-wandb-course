@@ -91,9 +91,9 @@ def predict_fn(model,dataset_ = None):
     attention_mask = dataset_['attention_mask']
 
     # Move the input tensors to the GPU
-    input_ids = torch.tensor(input_ids).to('cuda:0')
+    input_ids = torch.tensor(input_ids).to("cuda:0" if torch.cuda.is_available() else "cpu")
     # token_type_ids = torch.tensor(token_type_ids).to('cuda:0')
-    attention_mask = torch.tensor(attention_mask).to('cuda:0')
+    attention_mask = torch.tensor(attention_mask).to("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # Define batch size
     batch_size = 8
@@ -134,9 +134,9 @@ def conf_mat(df_val = None,preds_val = None):
     """
     plt.figure(figsize=(8,8))
     ConfusionMatrixDisplay.from_predictions(df_val.target,np.argmax(preds_val,axis=1))
-    plt.savefig(f"val_conf_matrix.png", format="png")
+    plt.savefig("val_conf_matrix.png", format="png")
     plt.show();
-    conf = wandb.Image(data_or_path="val_conf_matrix.png")
+    conf = wandb.Image(data_or_path=os.path.join(os.path.abspath(os.getcwd()),f"val_conf_matrix.png"))
     wandb.log({"val_conf_matrix": conf})
 def create_model(model_name = "distilroberta-base",num_labels = 7):
     """
