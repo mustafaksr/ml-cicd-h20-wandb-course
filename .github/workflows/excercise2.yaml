@@ -1,4 +1,4 @@
-name: excercise-ghapi-2
+name: excercise-ghapi
 on: issue_comment
 
 permissions:
@@ -21,14 +21,11 @@ jobs:
     - name: Make a comment
       shell: python
       run: |
-          import os
-          from ghapi.core import GhApi
-          owner,repo = os.environ['REPO'].split('/')
-          api = GhApi(owner=owner, repo=repo)
-          comment_body = 'github-actions bot added the feature label 🧾 now '
-          api.issues.create_comment(issue_number=os.environ['NUMBER'], body=comment_body)
-          api.issues.add_labels(issue_number=os.environ['NUMBER'], labels=['feature'])
-
+        import os
+        from ghapi.core import GhApi
+        owner,repo = os.environ['REPO'].split('/')
+        api = GhApi(owner=owner, repo=repo)
+        api.issues.add_labels(issue_number=os.environ['NUMBER'], labels=['feature'])
       env:
         NUMBER: ${{ github.event.issue.number }} 
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
