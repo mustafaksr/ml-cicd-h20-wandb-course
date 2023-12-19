@@ -1,4 +1,4 @@
-name: excercise-ghapi-2
+name: excercise-ghapi
 on: issue_comment
 
 permissions:
