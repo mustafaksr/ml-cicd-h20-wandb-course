@@ -39,14 +39,15 @@ jobs:
 
         PROJECT = 'h2o-ai-predict-the-llm-kaggle-competition'
         ENTITY = None
-
+        runid = os.environ['RUNID']
+        print(runid)
         report = wr.Report(
             entity=ENTITY,
             project=PROJECT,
             title='Compare Runs',
             description="A demo of comparing runs programatically"
         )  
-        runid = os.environ['RUNID']
+        
 
         run_path = f'mustafakeser/h2o-ai-predict-the-llm-kaggle-competition/{runid}' # this is the run id
         api = wandb.Api()
