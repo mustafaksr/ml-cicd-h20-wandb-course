@@ -17,19 +17,14 @@ jobs:
     - name: see payload # this step is for debugging purposes only, so you can see the payload. 
       run: echo "PAYLOAD:\n${PAYLOAD}\n"
       env:
-        PAYLOAD: ${{ toJSON(github.event) }}
-
-    - name: Extract runid from comment body
-      id: extract_runid
-      run: |
-        COMMENT_BODY=$(echo "${PAYLOAD}" | jq -r '.comment.body')
-        RUNID=$(echo "${COMMENT_BODY}" | awk '{print $2}')
-        echo "::set-output name=runid::${RUNID}"
+        PAYLOAD: ${{ toJSON(github.event) }}       
 
     - name: Make a comment
       shell: python
       run: |
-        import os
+        assert os.getenv('WANDB_API_KEY')
+        
+        import os, json
         from ghapi.core import GhApi
         import wandb
         import wandb.apis.reports as wr
@@ -48,7 +43,8 @@ jobs:
             description="A demo of comparing runs programmatically"
         )  
 
-        runid = os.environ['RUNID']
+        PAYLOAD = json.loads(os.environ['PAYLOAD'])
+        runid = PAYLOAD["comment"]["body"].split(" ")[1]
         run_path = f'mustafakeser/h2o-ai-predict-the-llm-kaggle-competition/{runid}'  # this is the run id
         api = wandb.Api()
         run = api.run(run_path)
@@ -78,4 +74,4 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
         REPO: ${{ github.repository }}
-        RUNID: ${{ steps.extract_runid.outputs.runid }}
+
