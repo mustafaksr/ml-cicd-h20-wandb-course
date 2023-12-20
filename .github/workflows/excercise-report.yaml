@@ -65,7 +65,8 @@ jobs:
           issue_number = os.environ['NUMBER']
           # Hyperlink the runid in the comment body
           comment_body = f'A comparison between the runid: {runid} and baseline in [this report]({report_url}).'
-          api.issues.create_comment(issue_number=issue_number, body=comment_body)
+          api.issues.add_labels(issue_number=os.environ['NUMBER'], labels=['baseline'])
+          api.issues.create_comment(issue_number=issue_number, body=comment_body,labels=['baseline'])
 
         env:
           NUMBER: ${{ github.event.issue.number }}
