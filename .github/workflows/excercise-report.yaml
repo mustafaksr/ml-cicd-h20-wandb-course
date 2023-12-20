@@ -76,5 +76,6 @@ jobs:
       env:
         NUMBER: ${{ github.event.issue.number }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
         REPO: ${{ github.repository }}
         RUNID: ${{ steps.extract_runid.outputs.runid }}
