@@ -11,49 +11,49 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: install dependencies
-      run: |
-        pip install ghapi
-        pip install wandb
+      run: pip install ghapi 
 
     - name: see payload # this step is for debugging purposes only, so you can see the payload. 
       run: echo "PAYLOAD:\n${PAYLOAD}\n"
       env:
         PAYLOAD: ${{ toJSON(github.event) }}
 
-    - name: Extract runid
+    - name: Extract runid from comment body
       id: extract_runid
-      run: echo "::set-output name=runid::$(echo ${PAYLOAD} | jq -r '.comment.body' | awk '{print $2}')"
+      run: |
+        COMMENT_BODY=$(echo "${PAYLOAD}" | jq -r '.comment.body')
+        RUNID=$(echo "${COMMENT_BODY}" | awk '{print $2}')
+        echo "::set-output name=runid::${RUNID}"
 
     - name: Make a comment
       shell: python
       run: |
-        import os,wandb
+        import os
         from ghapi.core import GhApi
+        import wandb
+        import wandb.apis.reports as wr
 
         owner, repo = os.environ['REPO'].split('/')
         api = GhApi(owner=owner, repo=repo)
 
-        ## wandb report
-        import wandb
-        import wandb.apis.reports as wr
-
+        # wandb report
         PROJECT = 'h2o-ai-predict-the-llm-kaggle-competition'
         ENTITY = None
-        runid = os.environ['RUNID']
-        print(runid)
+
         report = wr.Report(
             entity=ENTITY,
             project=PROJECT,
             title='Compare Runs',
-            description="A demo of comparing runs programatically"
+            description="A demo of comparing runs programmatically"
         )  
-        
 
-        run_path = f'mustafakeser/h2o-ai-predict-the-llm-kaggle-competition/{runid}' # this is the run id
+        runid = os.environ['RUNID']
+        run_path = f'mustafakeser/h2o-ai-predict-the-llm-kaggle-competition/{runid}'  # this is the run id
         api = wandb.Api()
         run = api.run(run_path)
         run_name = run.name
         compare_list = ['02-Baseline'] + [run_name]
+        
         pg = wr.PanelGrid(
             runsets=[
                 wr.Runset(ENTITY, PROJECT, "Run Comparison").set_filters_with_python_expr(f"""Name in {compare_list}""")
@@ -62,15 +62,14 @@ jobs:
                 wr.RunComparer(diff_only='split', layout={'w': 24, 'h': 15}),
             ]
         )
-        report.blocks =  [pg] 
+        report.blocks = [pg] 
         report.save()
         report_url = report.url
-        ## report end
+        # report end
 
         issue_number = os.environ['NUMBER']
-        ###todo: in this report should be hyperlink of report_url
+        # Hyperlink the runid in the comment body
         comment_body = f'A comparison between the runid: {runid} and baseline in [this report]({report_url}).'
-
         api.issues.create_comment(issue_number=issue_number, body=comment_body)
 
       env:
