@@ -1,0 +1,77 @@
+name: excercise-ghapi-question
+on: issue_comment
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  ghapi-exercise:
+    if: (github.event.issue.pull_request != null) && contains(github.event.comment.body, '/wandb')
+    runs-on: ubuntu-latest
+    steps:
+    - name: install dependencies
+      run: pip install ghapi 
+
+    - name: see payload # this step is for debugging purposes only, so you can see the payload. 
+      run: echo "PAYLOAD:\n${PAYLOAD}\n"
+      env:
+        PAYLOAD: ${{ toJSON(github.event) }}
+
+    - name: Extract runid
+      id: extract_runid
+      run: echo "::set-output name=runid::$(echo ${PAYLOAD} | jq -r '.comment.body' | awk '{print $2}')"
+
+    - name: Make a comment
+      shell: python
+      run: |
+        import os
+        from ghapi.core import GhApi
+
+        owner, repo = os.environ['REPO'].split('/')
+        api = GhApi(owner=owner, repo=repo)
+
+        ## wandb report
+        import wandb
+        import wandb.apis.reports as wr
+
+        PROJECT = 'h2o-ai-predict-the-llm-kaggle-competition'
+        ENTITY = None
+
+        report = wr.Report(
+            entity=ENTITY,
+            project=PROJECT,
+            title='Compare Runs',
+            description="A demo of comparing runs programatically"
+        )  
+        runid = os.environ['RUNID']
+
+        run_path = f'mustafakeser/h2o-ai-predict-the-llm-kaggle-competition/{runid}' # this is the run id
+        api = wandb.Api()
+        run = api.run(run_path)
+        run_name = run.name
+        compare_list = ['02-Baseline'] + [run_name]
+        pg = wr.PanelGrid(
+            runsets=[
+                wr.Runset(ENTITY, PROJECT, "Run Comparison").set_filters_with_python_expr(f"""Name in {compare_list}""")
+            ],
+            panels=[
+                wr.RunComparer(diff_only='split', layout={'w': 24, 'h': 15}),
+            ]
+        )
+        report.blocks =  [pg] 
+        report.save()
+        report_url = report.url
+        ## report end
+
+        issue_number = os.environ['NUMBER']
+        ###todo: in this report should be hyperlink of report_url
+        comment_body = f'A comparison between the runid: {runid} and baseline in [this report]({report_url}).'
+
+        api.issues.create_comment(issue_number=issue_number, body=comment_body)
+
+      env:
+        NUMBER: ${{ github.event.issue.number }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        REPO: ${{ github.repository }}
+        RUNID: ${{ steps.extract_runid.outputs.runid }}
