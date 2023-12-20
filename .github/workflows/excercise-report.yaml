@@ -22,13 +22,14 @@ jobs:
     - name: Make a comment
       shell: python
       run: |
-        assert os.getenv('WANDB_API_KEY')
+        
         
         import os, json
         from ghapi.core import GhApi
         import wandb
         import wandb.apis.reports as wr
-
+        assert os.getenv('WANDB_API_KEY')
+        
         owner, repo = os.environ['REPO'].split('/')
         api = GhApi(owner=owner, repo=repo)
 
