@@ -92,7 +92,9 @@ def predict_fn(model,dataset_ = None):
 
     # Move the input tensors to the GPU
     input_ids = torch.tensor(input_ids).to("cuda:0" if torch.cuda.is_available() else "cpu")
+
     # token_type_ids = torch.tensor(token_type_ids).to('cuda:0')
+
     attention_mask = torch.tensor(attention_mask).to("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # Define batch size
